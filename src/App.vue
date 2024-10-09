@@ -18,9 +18,20 @@
     <div v-if="animeRecommendations">
       <div v-for="recommendation in animeRecommendations" :key="recommendation.entry.mal_id">
         <h2>{{ recommendation.entry.title }}</h2>
-
         <a :href="recommendation.entry.url" target="_blank">Ver en MyAnimeList</a>
         <p>{{ recommendation.content }}</p>
+      </div>
+    </div>
+
+    <button @click="CountryPopulation">Country Population</button>
+    <div v-if="countryPopulation">
+      <div v-for="country in countryPopulation" :key="country.country">
+        <h2>{{ country.country }}</h2>
+        <ul>
+          <li v-for="population in country.populationCounts" :key="population.year">
+            Year: {{ population.year }}, Population: {{ population.value }}
+          </li>
+        </ul>
       </div>
     </div>
   </div>
@@ -35,6 +46,7 @@ export default {
       randomAnime: null,
       randomManga: null,
       animeRecommendations: [],
+      countryPopulation: null,
     };
   },
   methods: {
@@ -60,6 +72,14 @@ export default {
         this.animeRecommendations = response.data.data;
       } catch (error) {
         console.error("Error al obtener recomendaciones de anime:", error);
+      }
+    },
+    async CountryPopulation() {
+      try {
+        const response = await axios.get('https://countriesnow.space/api/v0.1/countries/population');
+        this.countryPopulation = response.data.data;
+      } catch (error) {
+        console.error("Error al obtener datos de población:", error);
       }
     },
   }
