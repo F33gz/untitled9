@@ -1,47 +1,52 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
+  <div>
+    <h1>API Data Fetcher</h1>
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+    <button @click="RandomAnime">Anime Aleatorio</button>
+    <p v-if="randomAnime">{{ randomAnime.title }}</p>
+    <img v-if="randomAnime" :src="randomAnime.image_url" alt="Anime Image">
+    <a v-if="randomAnime" :href="randomAnime.url" target="_blank">Ver en MyAnimeList</a>
+    <p v-if="randomAnime">{{ randomAnime.synopsis }}</p>
+
+    <div v-if="animeByCountryAndYear">
+      <p>{{ animeByCountryAndYear.title }}</p>
+      <img :src="animeByCountryAndYear.image_url" alt="Anime Image">
+      <a :href="animeByCountryAndYear.url" target="_blank">Ver en MyAnimeList</a>
+      <p>{{ animeByCountryAndYear.synopsis }}</p>
     </div>
-  </header>
-
-  <main>
-    <TheWelcome />
-  </main>
+  </div>
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
-}
+<script>
+import axios from 'axios';
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
+export default {
+  data() {
+    return {
+      randomAnime: null,
+      randomManga: null,
+    };
+  },
+  methods: {
+    async RandomAnime() {
+      try {
+        const response = await axios.get('https://api.jikan.moe/v4/random/anime');
+        this.randomAnime = response.data.data;
+      } catch (error) {
+        console.error("Error al obtener anime aleatorio:", error);
+      }
+    },
+    async RandomManga() {
+      try {
+        const response = await axios.get('https://api.jikan.moe/v4/random/manga');
+        this.randomManga = JSON.stringify(response.data.data);
+      } catch (error) {
+        console.error("Error al obtener manga aleatorio:", error);
+      }
+    },
   }
+};
+</script>
 
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-}
+<style>
 </style>
